@@ -1,0 +1,35 @@
+/* Tab4.css */
+ion-segment {
+    border: none;
+    background: transparent;
+}
+
+ion-segment-button {
+    --indicator-color: var(--ion-color-primary);
+    --indicator-height: 4px;
+}
+
+ion-segment-button ion-label {
+    padding: 8px 16px;
+}
+
+ion-datetime {
+    --padding-start: 0;
+    --padding-end: 0;
+    --padding-top: 0;
+    --padding-bottom: 0;
+    --placeholder-opacity: 1;
+    --placeholder-color: #000;
+}
+
+ion-card {
+    margin-top: 20px;
+    box-shadow: none;
+}
+
+ion-card-header {
+    padding: 0;
+}
+
+
+/* Add additional styles as needed */

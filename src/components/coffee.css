@@ -1,0 +1,33 @@
+.footer {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.customBody {
+    color: var(--adm-color-success);
+}
+
+.like{
+    width: 1.5rem;
+    height: 1.1rem;
+    margin-bottom: .5rem;
+}
+
+
+.icon {
+    color: black;
+    font-weight: bolder;
+}
+
+.icons {
+    color: #ff5f72;
+    font-weight: bolder;
+}
+
+.order{
+    cursor: pointer;
+}
+.clicked {
+    /* 点击后的样式 */
+    box-shadow: inset 0 0 2px #999;
+}

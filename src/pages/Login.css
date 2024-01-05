@@ -1,0 +1,72 @@
+.center-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background-color: #f6f8fa;
+    margin: 3rem auto auto;
+}
+
+.card1 {
+    width: 350px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-left: 50%;
+    transform: translateX(-50%);
+    margin-top: 2rem;
+}
+
+.card1 h2 {
+    margin-bottom: 20px;
+    color: #24292e;
+}
+
+.card1 input {
+    width: 100%;
+    padding: 5px;
+    border-radius: 5px;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.center-image-upload {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.card1 button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #2ea44f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+.card1 a {
+    display: block;
+    margin-top: 10px;
+    text-align: center;
+    color: #0366d6;
+    text-decoration: none;
+}
+
+.card1 .antd-mobile-tabs .antd-mobile-tabs-content-wrap {
+    border: none;
+}
+
+.input-field {
+    margin-bottom: 10px;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+}
+
+.fontStyle{
+    font-weight: 400;
+    text-align: left;
+}

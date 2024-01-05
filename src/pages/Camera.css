@@ -1,0 +1,419 @@
+.app-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffffff;
+}
+
+.camera-container {
+    position: relative;
+    max-width: 800px;
+    max-height: 420px;
+    overflow: hidden;
+}
+
+.output-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin-left: 50%;
+    transform: translateX(-50%);
+}
+
+.controls-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 640px;
+    padding: 10px 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.clear-button {
+    padding: 5px 10px;
+    background-color: #008CBA; /* teal */
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 1em;
+    margin-right: 10px;
+}
+
+.select-label {
+    color: white;
+    font-size: 1em;
+}
+
+.select-dropdown {
+    margin-left: 10px;
+    padding: 5px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    background-color: white;
+    color: black;
+}
+
+.snapshots-container {
+    display: flex;
+    max-width: 640px;
+    justify-content: center;
+    overflow-x: auto;
+    white-space: nowrap;
+    margin: 5px auto 2.5px;
+}
+
+.snapshot-card {
+    margin: .5px;
+    height: 120px;
+    overflow: hidden;
+}
+
+.snapshot-image {
+    height: 50%;
+    object-fit: cover;
+}
+
+.save-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 10px;
+    color: white;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.input-video{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    margin-left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Camera.css */
+.app-container {
+    /* ... 原有代码 ... */
+}
+
+.emotion-selector {
+    display: flex;
+    justify-content: center;
+}
+
+.emotion-selector-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin: 0 10px;
+}
+
+.emotion-selector-img {
+    height: 50px;
+    width: 50px;
+}
+.ellipsis-button {
+    color: black;
+    border: none;
+    padding: 10px;
+    font-size: 20px;
+    background-color: transparent;
+    margin-left: 80%;
+    z-index: 2;
+}
+
+#modal {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+.modal-content {
+    padding: 5px;
+    border: 1px solid #fffdfd;
+    border-radius: 20px;
+    width: 95%;
+    margin: 45px auto 10%;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.hidden {
+    display: none;
+}
+/* App.css */
+.progress-section {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+
+.progress-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: 2px solid #ddd;
+}
+
+.progress-percentage {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.progress-label {
+    position: absolute;
+    bottom: -20px; /* Adjust as needed */
+    width: 100%;
+    text-align: center;
+    font-size: 0.8em;
+}
+
+.green {
+    background: conic-gradient(#87dc87 0% 72%, transparent 72% 100%);
+}
+
+.red {
+    background: conic-gradient(#d58080 0% 14%, transparent 14% 100%);
+}
+
+.blue {
+    background: conic-gradient(#8181dc 0% 14%, transparent 14% 100%);
+}
+/* Camera.css */
+.container {
+    font-family: 'Arial', sans-serif;
+    padding: 20px; /* 上下左右的内边距 */
+    border-radius: 8px;
+    max-width: 400px;
+    width: 80%;
+    height:80vh;
+    margin: 10px auto 5px; /* 上边距和左右边距为自动调整，底部边距设为 5px */
+    border: 5px solid #02796b; /* 示例边框颜色：深绿色 */
+}
+
+
+.stat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 30px;
+    color:#02796b;
+    font-family: "Helvetica Neue", "Roboto", sans-serif;
+    border-bottom: 2px solid black;
+}
+
+.stat-content {
+    border-bottom: 1px solid #eaeaea;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.stat-indicator {
+    margin-right: 10px;
+}
+
+.circle {
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.green-circle {
+    background-color: #4CAF50;
+}
+
+.orange-circle {
+    background-color: #FF9800;
+}
+
+.stat span {
+    font-size: 18px;
+    color: #333;
+}
+
+.progress-section {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.progress-circle {
+    text-align: center;
+}
+
+.progress-percentage {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.progress-label {
+    font-size: 70%;
+    display: block;
+    margin-top: 20px;
+}
+
+.green {
+    color: #4CAF50;
+}
+
+.red {
+    color: #F44336;
+}
+
+.blue {
+    color: #2196F3;
+}
+.progress-section {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.button-container {
+    margin-left:26%;
+    transform: translate(-25%,0);
+    display: inline-block;
+}
+
+.heart-health-button {
+    background-color: #009688; /* Teal color */
+    color: white;
+    width: 120%;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Shadow effect */
+    outline: none; /* Removes the outline */
+    border: 2px solid transparent; /* Improves button click feel */
+}
+
+.heart-health-button:hover {
+    background-color: #00796b; /* A darker teal color for hover effect */
+}
+
+.heart-health-button:active {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Smaller shadow for click effect */
+}
+
+.heart-health-button:focus {
+    border-color: #005b4f; /* Color for focus */
+}
+
+.badge {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.icon-heart {
+    width: 24px; /* Icon size */
+    height: 24px; /* Icon size */
+    display: inline-block;
+    margin-right: 10px;
+}
+.canvas, .canvas1, .canvas2 {
+    position: absolute;
+    left: 40%;
+    width: 20%;        /* 设置宽度 */
+    height: 19.5%;
+    bottom: 12%;
+    border-radius: 50%; /* 创建圆形效果 */
+    /* 水平垂直居中 */
+}
+
+.canvas.cameraOnAnimation {
+    animation: cameraOn 0.5s ease-out forwards;
+}
+
+.canvas.cameraOffAnimation {
+    animation: cameraOff 0.5s ease-out forwards;
+}
+
+#thumb {
+    position: absolute;
+    top: 85%; /* Center vertically */
+    transform: translateY(-50%);
+    width: 50px; /* Set the size of your thumb image */
+    height: 50px; /* Set the size of your thumb image */
+    background: url('thumb.png') no-repeat; /* Set your thumb image */
+    background-size: contain;
+    animation: moveThumb 2s linear infinite alternate;
+}
+
+/* Keyframes for the thumb moving animation */
+@keyframes moveThumb {
+    from {
+        left: 10%; /* Start from outside the container */
+    }
+    to {
+        left: 30%; /* Move to the edge of the container */
+    }
+}
+
+/* Camera on animation */
+@keyframes cameraOn {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Camera off animation */
+@keyframes cameraOff {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+}
+
+.cameraOnAnimation {
+    animation: cameraOn 0.5s ease-out forwards;
+}
+
+.cameraOffAnimation {
+    animation: cameraOff 0.5s ease-out forwards;
+}

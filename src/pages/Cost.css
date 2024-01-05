@@ -1,0 +1,131 @@
+.title_cost{
+    display: block;
+    width: 7rem;
+    flex: 1;
+    margin-top: -1.8rem;
+    margin-left:50%;
+    transform: translate(-45%,0px);
+}
+.total1{
+    width:100%;
+    margin: 10px 5% auto;
+    font-size: 3rem;
+}
+
+.cart1{
+    background: rgba(255, 255, 255, 0.69);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    height:100%;
+    width:95%;
+    left:50%;
+    position:relative;
+    transform: translate(-50%,0);
+}
+
+.icon1{
+    margin-left: 0.5rem;
+    height: 1.5rem;
+    width: 1.5rem;
+}
+
+/* Cost.css */
+.cost-container {
+    font-family: 'Arial', sans-serif;
+    overflow-y: visible;
+}
+
+.cost-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.cost-stat {
+    background-color: #ffffff;
+    padding: 10px;
+    margin: 20px;
+    border-radius: 2%;
+}
+
+.cost-stat-title {
+    color: #000000;
+    font-size: 20px;
+}
+
+.cost-stat-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #4CAF50; /* 或根据实际颜色调整 */
+    margin: 5px 0;
+}
+
+.cost-stat-description {
+    font-size: 18px;
+    color: #FF9800; /* 或根据实际颜色调整 */
+}
+
+.cost-stat-footer {
+    font-size: 14px;
+    color: #000000;
+    margin-top: 10px;
+}
+/* Cost.css */
+
+.legend-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin:1rem 2rem auto;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem; /* Space between legend items */
+}
+
+.legend-color-box {
+    width: .5rem; /* Square size */
+    height: .5rem;
+    display: inline-block;
+    margin-right: 0.5rem; /* Space between the box and text */
+}
+
+.legend-text {
+    font-size: 1rem; /* Adjust text size as needed */
+    margin-right: 0.5rem; /* Space between the text and percentage */
+    color:black;
+}
+
+.legend-percentage {
+    font-size: 1.5rem; /* Adjust percentage size as needed */
+    font-weight: bold;
+    color: black; /* Text color, adjust if needed */
+}
+canvas {
+    height: 130px !important; /* 为了覆盖内联样式，可能需要使用 !important */
+}
+
+
+.card {
+    display: block;
+    width: 80%;
+    height: 5rem;
+    margin: auto 0;
+    background-color: #ffffff;
+}
+.date-time-header {
+    font-family: 'Arial', sans-serif; /* Choose a font-family that fits your design */
+    color: black; /* A color that matches your design */
+    font-size: 1.13rem; /* Choose an appropriate font size */
+    text-align: center; /* Center the text */
+    background-color: #ffffff;
+    margin: .3rem .1rem .4rem;
+    padding: 0.5rem;
+    border-radius: 0.25rem; /* Optional: rounded corners */
+    display: inline-block; /* Optional: to keep the background color close to the text */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Optional: a subtle shadow for depth */
+}

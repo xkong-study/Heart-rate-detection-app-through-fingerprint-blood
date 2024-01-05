@@ -1,0 +1,56 @@
+.account-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.account-label {
+    margin-right: 5px;
+}
+
+.account-value {
+    flex-grow: 1;
+    text-align: right;
+}
+
+.input-gray input {
+    color: grey !important;
+}
+
+
+.input-align {
+    margin-left: 30px;
+    align-self: center;
+}
+
+.arrow {
+    margin-left: 5px;
+}
+
+.light {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+ion-icon {
+    color: blue;
+}
+
+.light-gray {
+    background-color: gray;
+}
+
+.light-green {
+    background-color: green;
+}
+
+.light-red {
+    background-color: red;
+}
+
+.ion-padding{
+    margin-top: 2rem;
+}
