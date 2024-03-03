@@ -19,33 +19,12 @@ import { useHistory } from "react-router-dom";
 import './Tab4.css';
 import image from './mobile.png';
 import { heartCircle, heartHalf, heartDislike } from "ionicons/icons";
+import { Line } from 'react-chartjs-2';
 
-interface Record {
-    value: number;
-    time: string;
-}
-
-interface Data {
-    heartRate: Record[];
-    hrv: Record[];
-    bloodPressure: Record[];
-}
-
-interface ApiResponseItem {
-    heartRate?: number;
-    hrv?: number;
-    pressure?: number;
-    recordDate: string;
-}
-
-
-
-
-
-const Tab4: React.FC = () => {
+const Tab4 = () => {
     const history = useHistory();
     const [selectedSegment, setSelectedSegment] = useState('heart-rate');
-    const [data, setData] = useState<Data>({
+    const [data, setData] = useState({
         heartRate: [],
         hrv: [],
         bloodPressure: []
@@ -62,18 +41,16 @@ const Tab4: React.FC = () => {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
-                        // 在此处添加其他需要的请求头
                     },
-                    body: JSON.stringify({
-                        // 这里填写你的请求体内容
-                    })
+                    body: JSON.stringify({})
                 });
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
+                console.log(response);
                 const result = await response.json();
 
-                const formattedData = result.reduce((acc: Data, item: ApiResponseItem) => {
+                const formattedData = result.reduce((acc, item) => {
                     if (item.heartRate && item.heartRate !== 0) {
                         acc.heartRate.push({ value: item.heartRate, time: item.recordDate });
                     }
@@ -105,7 +82,14 @@ const Tab4: React.FC = () => {
         setShowAddRecordForm(true);
     };
 
-    const handleSegmentChange = (e: CustomEvent) => {
+    const chartOptions = {
+        responsive: false,
+        maintainAspectRatio: true, // Set to false to customize width and height
+        width: 800, // Set the width of the chart
+        height: 600, // Set the height of the chart
+    };
+
+    const handleSegmentChange = (e) => {
         const newValue = e.detail.value;
         setSelectedSegment(newValue);
         setShowAddRecordForm(false); // 切换标签时隐藏添加记录表单
@@ -113,7 +97,7 @@ const Tab4: React.FC = () => {
 
 
     const handleAddRecord = () => {
-        let parameterKey: string = ''; // 初始化为一个空字符串或合适的默认值
+        let parameterKey= ''; // 初始化为一个空字符串或合适的默认值
         switch (selectedSegment) {
             case 'heart-rate':
                 parameterKey = 'heartRate';
@@ -147,8 +131,26 @@ const Tab4: React.FC = () => {
         setNewRecordValue('');
     };
 
+    const getChartData = () => {
+        // 这里是模拟数据，你应当替换为从后端获取的数据
+        const labels = data.heartRate.map(record => record.time);
+        const dataSet = data.heartRate.map(record => record.value);
+
+        return {
+            labels,
+            datasets: [
+                {
+                    label: 'Heart Rate',
+                    data: dataSet,
+                    borderColor: 'rgb(75, 192, 192)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                }
+            ]
+        };
+    };
+
     const renderContent = () => {
-        let records: JSX.Element[] | JSX.Element = [];
+        let records = [];
         switch (selectedSegment) {
             case 'heart-rate':
                 records = data.heartRate.map((record, index) => (
@@ -226,7 +228,7 @@ const Tab4: React.FC = () => {
             <IonItem>
                 <IonLabel position="floating" style={{ flex: 1 }}>{recordType}</IonLabel>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <IonInput value={newRecordValue} onIonChange={e => setNewRecordValue(e.detail.value!)} type="number" style={{ flex: 2 }} />
+                    <IonInput value={newRecordValue} onIonChange={e => setNewRecordValue(e.detail.value)} type="number" style={{ flex: 2 }} />
                     <IonButton expand="block" onClick={handleAddRecord} style={{ flex: 1 }}>Submit</IonButton>
                 </div>
             </IonItem>
@@ -256,7 +258,7 @@ const Tab4: React.FC = () => {
                         <IonLabel style={{ fontSize: '.6rem' }}>Blood HRV</IonLabel>
                     </IonSegmentButton>
                 </IonSegment>
-
+                <Line data={getChartData()} options={chartOptions} />
                 {renderContent()}
             </IonContent>
         </IonPage>

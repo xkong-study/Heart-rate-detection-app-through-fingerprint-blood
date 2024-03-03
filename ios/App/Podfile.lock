@@ -1,22 +1,24 @@
 PODS:
   - Capacitor (5.5.1):
     - CapacitorCordova
-  - CapacitorApp (5.0.6):
+  - CapacitorApp (5.0.7):
     - Capacitor
-  - CapacitorCamera (5.0.7):
+  - CapacitorCamera (5.0.9):
     - Capacitor
   - CapacitorCommunityCameraPreview (2.0.0):
     - Capacitor
   - CapacitorCordova (5.5.1)
-  - CapacitorFilesystem (5.1.4):
+  - CapacitorFilesystem (5.2.1):
     - Capacitor
-  - CapacitorHaptics (5.0.6):
+  - CapacitorHaptics (5.0.7):
     - Capacitor
-  - CapacitorKeyboard (5.0.6):
+  - CapacitorKeyboard (5.0.8):
     - Capacitor
-  - CapacitorPreferences (5.0.6):
+  - CapacitorLocalNotifications (5.0.7):
     - Capacitor
-  - CapacitorStatusBar (5.0.6):
+  - CapacitorPreferences (5.0.7):
+    - Capacitor
+  - CapacitorStatusBar (5.0.7):
     - Capacitor
 
 DEPENDENCIES:
@@ -28,6 +30,7 @@ DEPENDENCIES:
   - "CapacitorFilesystem (from `../../node_modules/@capacitor/filesystem`)"
   - "CapacitorHaptics (from `../../node_modules/@capacitor/haptics`)"
   - "CapacitorKeyboard (from `../../node_modules/@capacitor/keyboard`)"
+  - "CapacitorLocalNotifications (from `../../node_modules/@capacitor/local-notifications`)"
   - "CapacitorPreferences (from `../../node_modules/@capacitor/preferences`)"
   - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
 
@@ -48,6 +51,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/haptics"
   CapacitorKeyboard:
     :path: "../../node_modules/@capacitor/keyboard"
+  CapacitorLocalNotifications:
+    :path: "../../node_modules/@capacitor/local-notifications"
   CapacitorPreferences:
     :path: "../../node_modules/@capacitor/preferences"
   CapacitorStatusBar:
@@ -55,16 +60,17 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Capacitor: 9da0a2415e3b6098511f8b5ffdb578d91ee79f8f
-  CapacitorApp: 024e1b1bea5f883d79f6330d309bc441c88ad04a
-  CapacitorCamera: 084b0b228bba7d00587910337b1c89e93b1d32ab
+  CapacitorApp: 17fecd0e6cb23feafac7eb0939417389038b0979
+  CapacitorCamera: 4892c5c392f60039d853dde78bc50ba19fbd113e
   CapacitorCommunityCameraPreview: 47070b2c66a79a424afe7c73bd951dfabfbc0f76
   CapacitorCordova: e128cc7688c070ca0bfa439898a5f609da8dbcfe
-  CapacitorFilesystem: af704badfbc69f6f8623d9ed313e5490e3723dcb
-  CapacitorHaptics: 1fffc1217c7e64a472d7845be50fb0c2f7d4204c
-  CapacitorKeyboard: b978154b024a5f65e044908e37d15b7de58b9d12
-  CapacitorPreferences: f03954bcb0ff09c792909e46bff88e3183c16b10
-  CapacitorStatusBar: 565c0a1ebd79bb40d797606a8992b4a105885309
+  CapacitorFilesystem: 9f3e3c7fea2fff12f46dd5b07a2914f2103e4cfc
+  CapacitorHaptics: 7c7c206f0c96a628fed073830c96d28c4b2e772e
+  CapacitorKeyboard: aec619a578235c6ce279075009a2689c2cf5c42c
+  CapacitorLocalNotifications: c58afadd159f6bc540ef9b3cbdbc82510a2bf112
+  CapacitorPreferences: 77ac427e98db83bace772455f8ba447430382c4c
+  CapacitorStatusBar: f390fbb49b82ffb754ea4b3cf71dc8b048baf3e7
 
-PODFILE CHECKSUM: 98552621a3cb3ab26e2ca8278be41d7f8e764a54
+PODFILE CHECKSUM: 24c928e4a6aa7870bcbecf52b27c34898a57643b
 
 COCOAPODS: 1.14.3

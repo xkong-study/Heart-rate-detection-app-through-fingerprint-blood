@@ -37,14 +37,9 @@ import {useEffect, useState} from "react";
 import CameraCapture from "./pages/camera";
 
 setupIonicReact();
-const App: React.FC = () => {
-  const [shouldReload, setShouldReload] = useState(false);
+const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
-  useEffect(() => {
-    if (shouldReload) {
-      window.location.reload();
-    }
-  }, [shouldReload]);
   return(
   <IonApp>
     <Provider store={store}>
@@ -67,7 +62,7 @@ const App: React.FC = () => {
             <Cost />
           </Route>
           <Route path="/Camera">
-            <CameraCapture />
+            <CameraCapture/>
           </Route>
           <Route path="/account">
             <Account />
@@ -76,6 +71,7 @@ const App: React.FC = () => {
             <Login/>
           </Route>
         </IonRouterOutlet>
+        {isLoggedIn && (
         <IonTabBar slot="bottom">
           <IonTabButton tab="tab1" href="/Camera">
             <IonIcon aria-hidden="true" icon={home}  style={{color:'#02796b'}}/>
@@ -94,6 +90,7 @@ const App: React.FC = () => {
             <IonLabel style={{color:'#02796b'}}>User</IonLabel>
           </IonTabButton>
         </IonTabBar>
+        )}
       </IonTabs>
     </IonReactRouter>
     </Provider>

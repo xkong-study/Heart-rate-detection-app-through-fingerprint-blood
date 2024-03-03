@@ -5,11 +5,10 @@ import {useState} from "react"
 import { CapsuleTabs, Toast } from 'antd-mobile'
 import { Input } from 'antd-mobile'
 import { useHistory } from "react-router-dom";
-import { ImageUploadItem } from 'antd-mobile/es/components/image-uploader'
 import {Alert, Upload, Avatar, Tooltip,Button} from "antd";
 import {UserOutlined,CameraOutlined} from "@ant-design/icons";
 
-const Login: React.FC = () => {
+const Login = () => {
     const [value, setValue] = useState('')
     const [password, setPassword] = useState('')
     const [r_value,setR_value] = useState('')
@@ -20,15 +19,54 @@ const Login: React.FC = () => {
     const [signature, setSignature] = useState('');
     const [avatar, setAvatar] = useState('');
     const [isVisible, setIsVisible] = useState(false);
+    const forceUpdate = false;
+
     const closeAlert = () => {
         setIsVisible(false);
     };
-    const beforeUpload = (file:any) => {
+    const beforeUpload = (file) => {
         const reader = new FileReader();
         // @ts-ignore
         reader.onloadend = () => setAvatar(reader.result);
         reader.readAsDataURL(file);
         return false;
+    };
+
+    const handleLogin = async () => {
+        try {
+            const response = await axios.post(
+                'http://localhost:8084/user/login',
+                {
+                    name: value,
+                    password: password,
+                },
+                {
+                    withCredentials: true, // Include credentials in the request (cookies)
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Methods': 'POST, GET, PUT, OPTIONS, DELETE',
+                    },
+                }
+            );
+            if (response.data) {
+                Toast.show({
+                    icon: 'success',
+                    content: 'Login successful!',
+                });
+                localStorage.setItem('user', JSON.stringify(response.data));
+                history.push("/Camera");
+            } else {
+                Toast.show({
+                    icon: 'fail',
+                    content: 'Login failed!',
+                });
+            }
+        } catch (error) {
+            Toast.show({
+                icon: 'fail',
+                content: 'Login failed!',
+            });
+        }
     };
 
     const uploadButton = (
@@ -39,33 +77,44 @@ const Login: React.FC = () => {
 
     const history = useHistory();
 
-    const handleTabChange = (tabKey:any) => {
+    const handleTabChange = (tabKey) => {
         setActiveTab(tabKey);
     }
 
-    const handleLogin = () => {
-        // Simulate a successful login
-        localStorage.setItem('name', value);
-        Toast.show({
-            icon: 'success',
-            content: 'Login successful!',
-        });
-        window.location.href = "./Camera";
-    };
-
-    const handleRegister = () => {
-        // Check if the required fields are filled
-        if (username && email && r_password && signature) {
-            // Simulate a successful registration
+    const handleRegister = async () => {
+        try {
+            const response = await axios.post(
+                'http://localhost:8084/user/register', // Adjust this URL to match your back-end route
+                {
+                    name: username, // Assuming 'username' holds the new user's name
+                    email: email,
+                    password: r_password,
+                    signature: signature, // Additional fields as needed
+                    // avatar: avatar, // Handling file uploads requires additional setup
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+            if (response.status === 200) {
+                Toast.show({
+                    icon: 'success',
+                    content: 'Registration successful!',
+                });
+                setActiveTab('fruits');
+            } else {
+                throw new Error('Registration failed');
+            }
+        } catch (error) {
+            console.error(error);
             Toast.show({
-                icon: 'success',
-                content: 'Registration successful!',
+                icon: 'fail',
+                content: 'Registration failed!',
             });
-            setTimeout(() => setActiveTab('fruits'), 2000);
-        } else {
-            alert('Username, password, email, and signature cannot be empty');
         }
-    }
+    };
     // @ts-ignore
     document.querySelector('ion-tab-bar').style.display='none'
 

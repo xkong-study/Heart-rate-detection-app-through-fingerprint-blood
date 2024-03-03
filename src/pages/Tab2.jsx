@@ -15,8 +15,52 @@ import {
     IonDatetime
 } from '@ionic/react';
 import './Tab2.css';
+import { LocalNotifications } from '@capacitor/local-notifications';
+
+let count = 0;
+const scheduleNotification = async (alarm) => {
+    const now = new Date();
+    const [hours, minutes] = alarm.time.split(':').map(Number); // 将字符串转换为数字
+    const alarmTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+    count+=1;
+    if(count>1) return;
+    await LocalNotifications.schedule({
+        notifications: [
+            {
+                title: "Alarm",
+                body: alarm.label,
+                id: new Date().getTime(),
+                schedule: { at: alarmTime },
+                sound: 'default',
+                attachments: null,
+                actionTypeId: "",
+                extra: null
+            }
+        ]
+    });
+};
+
+LocalNotifications.addListener('localNotificationActionPerformed', (notification) => {
+    console.log('Notification action performed', notification);
+});
+
 
 const Tab2 = () => {
+    useEffect(() => {
+        const requestAndSchedule = async () => {
+            const permissionStatus = await LocalNotifications.requestPermissions();
+            console.log(permissionStatus);
+            const notifListener = LocalNotifications.addListener('localNotificationActionPerformed', (notification) => {
+                console.log('Notification action performed', notification);
+            });
+            return () => {
+                notifListener.remove();
+            };
+        };
+
+        requestAndSchedule();
+    }, []);
+
     const [alarms, setAlarms] = useState([
         { time: '09:00', label: 'heart rate', isEnabled: false },
         { time: '09:00', label: 'blood pressure', isEnabled: false },
@@ -24,18 +68,8 @@ const Tab2 = () => {
     const [showModal, setShowModal] = useState(false);
     const [newAlarmTime, setNewAlarmTime] = useState('');
     const [newAlarmLabel, setNewAlarmLabel] = useState('');
-    const [audio] = useState(new Audio(process.env.PUBLIC_URL + '/alert.mp3'));
     const [isPlaying, setIsPlaying] = useState(false);
-    const [isAudioLoaded, setIsAudioLoaded] = useState(false);
 
-    useEffect(() => {
-        audio.onloadeddata = () => {
-            setIsAudioLoaded(true);
-        };
-        audio.onerror = (e) => {
-            console.error("音频加载失败", e);
-        };
-    }, [audio]);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -46,43 +80,16 @@ const Tab2 = () => {
                     const [hours, minutes] = alarm.time.split(':');
                     alarmTime.setHours(hours, minutes, 0);
 
-                    if (now.getHours() === alarmTime.getHours() && now.getMinutes() === alarmTime.getMinutes() && !isPlaying) {
-                        playAudio(index);
+                    if (now.getHours() === alarmTime.getHours() && now.getMinutes()+1 === alarmTime.getMinutes()) {
+                        scheduleNotification(alarm);
                     }
                 }
             });
         }, 1000); // 每秒检查一次时间
 
         return () => clearInterval(interval);
-    }, [alarms, audio, isPlaying]);
+    }, [alarms,isPlaying]);
 
-    const playAudio = (index) => {
-        if (isAudioLoaded ) {
-            audio.play()
-                .then(() => {
-                    setIsPlaying(true);
-                    setTimeout(() => {
-                        audio.pause();
-                        setIsPlaying(false);
-                        toggleAlarm(index, false);
-                    }, 60000);
-                })
-                .catch(error => {
-                    console.error("播放音频失败:", error);
-                });
-        } else {
-            console.error("音频未加载");
-        }
-    };
-
-    const stopAudio = () => {
-        audio.pause();
-        setIsPlaying(false);
-        const updatedAlarms = alarms.map(alarm => {
-            return { ...alarm, isEnabled: false };
-        });
-        setAlarms(updatedAlarms);
-    };
 
     const addAlarm = () => {
         const newAlarm = {
@@ -153,9 +160,6 @@ const Tab2 = () => {
                         <IonButton expand="block" color="light" onClick={() => setShowModal(false)}>Cancel</IonButton>
                     </IonContent>
                 </IonModal>
-                {isPlaying && (
-                    <IonButton expand="block" onClick={stopAudio}>Turn off alarm</IonButton>
-                )}
             </IonContent>
         </IonPage>
     );

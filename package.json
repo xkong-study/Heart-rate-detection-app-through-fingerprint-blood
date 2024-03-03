@@ -14,6 +14,7 @@
     "@capacitor/haptics": "^5.0.6",
     "@capacitor/ios": "5.5.1",
     "@capacitor/keyboard": "^5.0.6",
+    "@capacitor/local-notifications": "^5.0.7",
     "@capacitor/preferences": "^5.0.6",
     "@capacitor/status-bar": "^5.0.6",
     "@emotion/react": "^11.10.6",
@@ -46,7 +47,7 @@
     "antd-mobile-icons": "^0.3.0",
     "axios": "^1.4.0",
     "bootstrap": "^5.3.0-alpha2",
-    "chart.js": "^4.4.0",
+    "chart.js": "^4.4.2",
     "echarts-for-react": "^3.0.2",
     "face-api.js": "^0.22.2",
     "fft-js": "^0.0.12",
@@ -80,13 +81,14 @@
     "workbox-streams": "^5.1.4"
   },
   "scripts": {
-    "start": "HTTPS=true react-scripts start",
+    "start": "react-scripts start",
     "start serve": "HTTPS=true HOST=192.168.0.63 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --transformIgnorePatterns 'node_modules/(?!(@ionic/react|@ionic/react-router|@ionic/core|@stencil/core|ionicons)/)'",
     "eject": "react-scripts eject",
     "ios": "ionic capacitor run ios -l"
   },
+  "proxy": "http://localhost:8084",
   "eslintConfig": {
     "extends": [
       "react-app",

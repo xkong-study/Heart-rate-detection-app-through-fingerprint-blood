@@ -9,10 +9,10 @@ import note from "../components/note.png";
 import save from "../components/save.png";
 import boy from "./boy.jpg";
 import boy1 from "./boy1.jpg";
-const Tab4: React.FC = () => {
+const Tab4 = () => {
     const history = useHistory()
 
-    const navigateTo = (route: string) => {
+    const navigateTo = (route) => {
         history.push(route)
     }
 
@@ -27,20 +27,6 @@ const Tab4: React.FC = () => {
                             {!localStorage.getItem("email")?<img src={boy} alt="User"/>:<img src={boy1} alt="User"/>}
                         </IonAvatar>
                         <IonLabel className="user-label">djm</IonLabel>
-                    </div>
-                </div>
-                <div className="user-actions">
-                    <div className="user-action">
-                        <img className="user-action-img" src={draft} alt="draft"/>
-                        <h6 className="user-action-label">blog</h6>
-                    </div>
-                    <div className="user-action">
-                        <img className="user-action-img" src={note} alt="note"/>
-                        <h6 className="user-action-label">log</h6>
-                    </div>
-                    <div className="user-action">
-                        <img className="user-action-img" src={save} alt="save"/>
-                        <h6 className="user-action-label">save</h6>
                     </div>
                 </div>
                 <IonCard className="user-menu">
