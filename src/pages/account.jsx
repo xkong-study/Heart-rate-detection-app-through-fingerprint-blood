@@ -12,7 +12,7 @@ const Account = () => {
 
     const handleUpdateProfile = async () => {
         try {
-            const response = await axios.post('http://localhost:8084/user/update', {
+            const response = await axios.post('http://192.168.0.63:8084/user/update', {
                 email: email,
                 name: name,
                 signature: signature,

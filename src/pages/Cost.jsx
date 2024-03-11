@@ -1,9 +1,10 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import {useHistory, useLocation} from 'react-router-dom';
 import './Cost.css';
 import { Scatter } from 'react-chartjs-2';
 import { Chart as ChartJS, registerables } from 'chart.js';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import {IonBackButton, IonButton, IonButtons, IonContent, IonHeader, IonPage, IonTitle, IonToolbar} from '@ionic/react';
+import {arrowBackOutline} from "ionicons/icons";
 
 // Register the required components for Chart.js
 ChartJS.register(...registerables);
@@ -82,10 +83,20 @@ const Cost = () => {
         maintainAspectRatio: false,
     };
 
+    const history = useHistory();
+    const handleBackClick = () => {
+        history.goBack();
+    };
+
     return (
         <IonPage>
             <IonHeader>
                 <IonToolbar>
+                    <IonButtons slot="start">
+                        <IonButton onClick={handleBackClick}>
+                            <ion-icon icon={arrowBackOutline}></ion-icon> Back
+                        </IonButton>
+                    </IonButtons>
                     <IonTitle>Heart Health Analysis</IonTitle>
                 </IonToolbar>
             </IonHeader>

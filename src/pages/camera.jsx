@@ -5,7 +5,6 @@ import {IonContent, IonHeader, IonPage} from "@ionic/react";
 import cameraGif from './camera.gif';
 import { CameraPreview } from '@capacitor-community/camera-preview';
 import Survey from "./survey";
-import {useParams} from "react-router";
 
 const ProgressCircle = ({ percentage, color }) => {
     const size = 80;
@@ -49,7 +48,7 @@ function CameraCapture() {
     const processing = useRef(false);
     let colorSamples = [];
     const SAMPLE_WINDOW = 10000;
-    const SAMPLE_RATE = 1000;
+    const SAMPLE_RATE = 10;
     const [heartRates, setHeartRates] = useState([]);
     const [hrvEstimate, setHrvEstimate] = useState(0); // 存储估算的HRV
     const [normalRatePercentage, setNormalRatePercentage] = useState(0);
@@ -70,21 +69,66 @@ function CameraCapture() {
     const history = useHistory();
 
     useEffect(() => {
-        if(open === true) {
-            const intervalId = setInterval(() => {
-                if (heartRates.length > 1) {
-                    // 计算心率的变化量
-                    const rateChanges = heartRates.slice(1).map((rate, i) => Math.abs(rate - heartRates[i]));
-                    // 计算变化量的平均值
-                    const averageChange = rateChanges.reduce((a, b) => a + b, 0) / rateChanges.length;
-                    setHrvEstimate(Math.floor(averageChange));
+        let intervalId;
+
+        const manageCamera = async () => {
+            if (isCameraOn) {
+                try {
+                    await CameraPreview.start({
+                        parent: 'cameraPreview',
+                        position: 'rear',
+                        toBack: true,
+                        videoWidth: window.screen.width,
+                        videoHeight: window.screen.height,
+                    });
+                    intervalId = setInterval(captureAndProcessFrame, 1000);
+                } catch (error) {
+                    console.error("Error starting camera:", error);
                 }
-            }, 6000); // 每分钟更新一次HRV估算值
-            const percentages = calculateHeartRatePercentages(heartRates);
-            updateHeartRateData(percentages);
-            return () => clearInterval(intervalId);
+            } else {
+                CameraPreview.stop();
+                console.log('Camera stopped');
+                if (intervalId) clearInterval(intervalId);
+            }
+        };
+        manageCamera();
+        return () => {
+            if (intervalId) clearInterval(intervalId);
+            CameraPreview.stop();
+        };
+    }, [isCameraOn]);
+
+    const applySimpleMovingAverageFilter = (samples, sampleWindow) => {
+        let filteredSamples = [];
+        for (let i = 0; i < samples.length; i++) {
+            if (i < sampleWindow - 1) {
+                // 对于数组前端不足以形成完整窗口的部分，直接使用原始值
+                filteredSamples.push(samples[i]);
+            } else {
+                // 计算当前位置向前sampleWindow个样本的平均值
+                let sum = 0;
+                for (let j = 0; j < sampleWindow; j++) {
+                    sum += samples[i - j];
+                }
+                let average = sum / sampleWindow;
+                filteredSamples.push(average);
+            }
         }
-    }, [heartRates,open]);
+        return filteredSamples;
+    };
+
+    const calculateSimplifiedHeartRate = (colorSamples) => {
+        let peakCount = 0;
+        let threshold = 50;
+
+        for (let i = 1; i < colorSamples.length - 1; i++) {
+            if (colorSamples[i] > threshold && colorSamples[i] > colorSamples[i - 1] && colorSamples[i] > colorSamples[i + 1]) {
+                peakCount++;
+            }
+        }
+        const heartRate = peakCount * (60 / (colorSamples.length / SAMPLE_RATE));
+        return heartRate;
+    };
 
     const processFrame = (base64Image) => {
         if (canvasRef.current && !processing.current) {
@@ -97,17 +141,24 @@ function CameraCapture() {
                 let sumRed = 0;
                 let pixelCount = 0;
 
+                // 计算红色通道的平均值
                 for (let i = 0; i < data.length; i += 4) {
-                    sumRed += data[i];
+                    sumRed += data[i]; // 红色通道值
                     pixelCount++;
                 }
 
                 const avgRed = sumRed / pixelCount;
                 colorSamples.push(avgRed);
-                if (colorSamples.length >= 10) {
-                    const heartRateEstimate = calculateHeartRate(colorSamples);
+
+                // 当累积足够的样本后，进行心率估算
+                if (colorSamples.length >= 20) {
+                    // 应用简化的移动平均滤波（如果您决定使用它来平滑数据）
+                    const filteredSamples = applySimpleMovingAverageFilter(colorSamples, 4); // 窗口大小为4
+
+                    // 使用简化的心率计算方法
+                    const heartRateEstimate = calculateSimplifiedHeartRate(filteredSamples); // 使用简化的心率计算方法
                     setHeartRate(heartRateEstimate);
-                    colorSamples = [];
+                    colorSamples = []; // 清空样本数组，准备下一轮采样
                 }
             };
             image.src = `data:image/jpeg;base64,${base64Image}`;
@@ -155,6 +206,8 @@ function CameraCapture() {
         }
 
         manageCamera();
+        const percentages = calculateHeartRatePercentages(heartRates);
+        updateHeartRateData(percentages);
         return () => {
             if (intervalId) clearInterval(intervalId);
         };
@@ -218,7 +271,7 @@ function CameraCapture() {
             hrv: hrv
         });
 
-        fetch('http://localhost:8084/user/add', {
+        fetch('http://192.168.0.63:8084/user/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -243,73 +296,73 @@ function CameraCapture() {
     return (
         <IonPage style={{marginTop:"1rem"}}>
             <IonContent fullscreen className="center-card">
-        <div style={{marginTop:"1rem"}}>
-        <div className="button-container">
-            <span className="badge">NEW</span>
-            <button type="button" className="heart-health-button" onClick={toggleSurveyDisplay}>
-                <i className="icon-heart"></i> Take heart health tests
-            </button>
-        </div>
-            {showSurvey? <Survey />:
-                <div className="container">
-                    <div className="stat-header">
-                        <span>Latest Status</span>
-                        <span onClick={handleStatClick} style={{marginTop:"-10%"}}>...</span>
+                <div style={{marginTop:"1rem"}}>
+                    <div className="button-container">
+                        <span className="badge">NEW</span>
+                        <button type="button" className="heart-health-button" onClick={toggleSurveyDisplay}>
+                            <i className="icon-heart"></i> Take heart health tests
+                        </button>
                     </div>
-                    <div className="stat-content">
-                        <div className="stat">
-                            <div className="stat-indicator">
-                                <div className="circle green-circle"></div>
-                                <span>Heart Rate</span>
+                    {showSurvey? <Survey />:
+                        <div className="container">
+                            <div className="stat-header">
+                                <span>Latest Status</span>
+                                <span onClick={handleStatClick} style={{marginTop:"-10%"}}>...</span>
                             </div>
-                            <span>{heartRate} BPM</span>
-                        </div>
-                        <div className="stat">
-                            <div className="stat-indicator">
-                                <div className="circle orange-circle"></div>
-                                <span>HRV</span>
+                            <div className="stat-content">
+                                <div className="stat">
+                                    <div className="stat-indicator">
+                                        <div className="circle green-circle"></div>
+                                        <span>Heart Rate</span>
+                                    </div>
+                                    <span>{heartRate} BPM</span>
+                                </div>
+                                <div className="stat">
+                                    <div className="stat-indicator">
+                                        <div className="circle orange-circle"></div>
+                                        <span>HRV</span>
+                                    </div>
+                                    <span>{hrvEstimate} ms</span>
+                                </div>
+                                <div className="stat">
+                                    <div className="stat-indicator">
+                                        <div className="circle green-circle"></div>
+                                        <span>Stress</span>
+                                    </div>
+                                    <span>5%</span>
+                                </div>
                             </div>
-                            <span>{hrvEstimate} ms</span>
-                        </div>
-                        <div className="stat">
-                            <div className="stat-indicator">
-                                <div className="circle green-circle"></div>
-                                <span>Stress</span>
+                            <div class="progress-section">
+                                <div class="progress-circle">
+                                    <ProgressCircle percentage={normalRatePercentage} color="#02796b" />
+                                    <div class="progress-label">Normal Heart Rate</div>
+                                </div>
+                                <div class="progress-circle">
+                                    <ProgressCircle percentage={tachycardiaPercentage} color="red" />
+                                    <div class="progress-label">Fast Heart Rate</div>
+                                </div>
+                                <div class="progress-circle">
+                                    <ProgressCircle percentage={bradycardiaPercentage} color="#0273c2" />
+                                    <div class="progress-label">Slow Heart Rate</div>
+                                </div>
                             </div>
-                            <span>5%</span>
+                            <div className="stat-header" style={{marginTop:'2rem'}}>
+                                <span>Detection</span>
+                            </div>
+                            <div onClick={() => startstop()}>
+                                <div id="thumb"></div>
+                                {
+                                    isCameraOn ?
+                                        <img src={cameraGif} alt="Camera Loading" className="canvas1"/> :
+                                        <div className="canvas2" style={{backgroundColor:'black'}}/>
+                                }
+                                <canvas className={`canvas ${isCameraOn ? 'cameraOnAnimation' : 'cameraOffAnimation'}`} ref={canvasRef} style={{display: isCameraOn ? 'block' : 'none'}}>
+                                    <div id="cameraPreview"></div>
+                                </canvas>
+                            </div>
                         </div>
-                    </div>
-                    <div class="progress-section">
-                        <div class="progress-circle">
-                            <ProgressCircle percentage={normalRatePercentage} color="#02796b" />
-                            <div class="progress-label">Normal Heart Rate</div>
-                        </div>
-                        <div class="progress-circle">
-                            <ProgressCircle percentage={tachycardiaPercentage} color="red" />
-                            <div class="progress-label">Fast Heart Rate</div>
-                        </div>
-                        <div class="progress-circle">
-                            <ProgressCircle percentage={bradycardiaPercentage} color="#0273c2" />
-                            <div class="progress-label">Slow Heart Rate</div>
-                        </div>
-                    </div>
-                    <div className="stat-header" style={{marginTop:'2rem'}}>
-                        <span>Detection</span>
-                    </div>
-                    <div onClick={() => startstop()}>
-                        <div id="thumb"></div>
-                        {
-                            isCameraOn ?
-                                <img src={cameraGif} alt="Camera Loading" className="canvas1"/> :
-                                <div className="canvas2" style={{backgroundColor:'black'}}/>
-                        }
-                        <canvas className={`canvas ${isCameraOn ? 'cameraOnAnimation' : 'cameraOffAnimation'}`} ref={canvasRef} style={{display: isCameraOn ? 'block' : 'none'}}>
-                            <div id="cameraPreview"></div>
-                        </canvas>
-                    </div>
+                    }
                 </div>
-            }
-        </div>
             </IonContent>
         </IonPage>
     );

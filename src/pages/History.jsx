@@ -37,7 +37,7 @@ const Tab4 = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('http://localhost:8084/user/list', {
+                const response = await fetch('http://192.168.0.63:8084/user/list', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -117,7 +117,7 @@ const Tab4 = () => {
             [parameterKey]: newRecordValue,
         });
 
-        fetch('http://localhost:8084/user/add', {
+        fetch('http://192.168.0.63:8084/user/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

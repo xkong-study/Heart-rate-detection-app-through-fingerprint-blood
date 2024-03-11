@@ -35,13 +35,12 @@ const Login = () => {
     const handleLogin = async () => {
         try {
             const response = await axios.post(
-                'http://localhost:8084/user/login',
+                'http://192.168.0.63:8084/user/login',
                 {
                     name: value,
                     password: password,
                 },
                 {
-                    withCredentials: true, // Include credentials in the request (cookies)
                     headers: {
                         'Content-Type': 'application/json',
                         'Access-Control-Allow-Methods': 'POST, GET, PUT, OPTIONS, DELETE',
@@ -62,12 +61,13 @@ const Login = () => {
                 });
             }
         } catch (error) {
+            console.error('Error during login:', JSON.stringify(error));
             Toast.show({
                 icon: 'fail',
                 content: 'Login failed!',
             });
         }
-    };
+    }
 
     const uploadButton = (
         <Tooltip title="change avatar">
@@ -84,7 +84,7 @@ const Login = () => {
     const handleRegister = async () => {
         try {
             const response = await axios.post(
-                'http://localhost:8084/user/register', // Adjust this URL to match your back-end route
+                'http://192.168.0.63:8084/user/register', // Adjust this URL to match your back-end route
                 {
                     name: username, // Assuming 'username' holds the new user's name
                     email: email,
@@ -108,7 +108,7 @@ const Login = () => {
                 throw new Error('Registration failed');
             }
         } catch (error) {
-            console.error(error);
+            console.error(JSON.stringify(error))
             Toast.show({
                 icon: 'fail',
                 content: 'Registration failed!',

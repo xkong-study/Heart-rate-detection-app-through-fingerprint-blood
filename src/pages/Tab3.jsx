@@ -27,7 +27,7 @@ const BloodPressureCalculator = () => {
                 pressure: systolicPressure,
             });
 
-            fetch('http://localhost:8084/user/add', {
+            fetch('http://192.168.0.63:8084/user/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -5,9 +5,5 @@
       "version": "5.2.2"
     }
   },
-  "type": "react",
-  "ssl": {
-    "cert": "./server.cert",
-    "key": "./server.key"
-  }
+  "type": "react"
 }
