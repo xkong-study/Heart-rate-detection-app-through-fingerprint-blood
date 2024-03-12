@@ -35,6 +35,7 @@ import { Provider } from 'react-redux';
 import store from "./store";
 import {useEffect, useState} from "react";
 import CameraCapture from "./pages/camera";
+import Survey from "./pages/survey";
 
 setupIonicReact();
 const App = () => {
@@ -52,6 +53,9 @@ const App = () => {
           <Route path="/tab3">
             <Tab3 />
           </Route>
+          <Route path="/Survey">
+          <Survey />
+         </Route>
           <Route path="/history">
             <History />
           </Route>

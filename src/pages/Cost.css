@@ -106,9 +106,14 @@
     color: black; /* Text color, adjust if needed */
 }
 canvas {
-    height: 130px !important; /* 为了覆盖内联样式，可能需要使用 !important */
+    height: 420px !important;
+    width: 90% !important;
 }
 
+#can {
+    height: 130px !important;
+    width: 20% !important;
+}
 
 .card {
     display: block;
@@ -128,4 +133,35 @@ canvas {
     border-radius: 0.25rem; /* Optional: rounded corners */
     display: inline-block; /* Optional: to keep the background color close to the text */
     box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Optional: a subtle shadow for depth */
+}
+/* Apply a flexbox layout to arrange the containers side by side */
+.container-wrapper {
+    display: flex;
+}
+
+/* Style for the chart container */
+.chart-container {
+    flex: 1; /* Allow the chart container to grow and take available space */
+    padding: 20px;
+    background-color: #fcfcfc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for the content container */
+.content-container {
+    flex: 1; /* Allow the content container to grow and take available space */
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+video {
+    width: 30%;
+    height: auto;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    transform: rotateY(180deg);
 }

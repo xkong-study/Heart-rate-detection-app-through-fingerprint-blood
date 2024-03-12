@@ -83,11 +83,17 @@ const Tab4 = () => {
     };
 
     const chartOptions = {
-        responsive: false,
-        maintainAspectRatio: true, // Set to false to customize width and height
-        width: 800, // Set the width of the chart
-        height: 600, // Set the height of the chart
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                stepSize: 20,
+                max: Math.ceil(Math.max(...data.heartRate.map(record => record.value)) / 20) * 20,
+            },
+        },
     };
+
 
     const handleSegmentChange = (e) => {
         const newValue = e.detail.value;
@@ -132,8 +138,16 @@ const Tab4 = () => {
     };
 
     const getChartData = () => {
-        // 这里是模拟数据，你应当替换为从后端获取的数据
-        const labels = data.heartRate.map(record => record.time);
+        const labels = data.heartRate.map(record => {
+            const timestamp = record.time;
+            const date = new Date(timestamp);
+
+            // Example: MM-dd HH:mm:ss
+            const formattedTime = `${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+
+            return formattedTime;
+        });
+
         const dataSet = data.heartRate.map(record => record.value);
 
         return {
@@ -154,10 +168,12 @@ const Tab4 = () => {
         switch (selectedSegment) {
             case 'heart-rate':
                 records = data.heartRate.map((record, index) => (
-                    <div key={index} className="record" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}>
-                        <span>Heart Rate: {record.value}</span>
-                        <span>Date: {record.time}</span>
-                    </div>
+                   <div>
+                       <div key={index} className="record" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', padding: '10px', border: '1px solid #ccc', borderRadius: '5px' }}>
+                           <span>Heart Rate: {record.value}</span>
+                           <span>Date: {record.time}</span>
+                       </div>
+                   </div>
                 ));
                 break;
             case 'blood-pressure':
@@ -185,7 +201,7 @@ const Tab4 = () => {
                 <IonCardHeader className="ion-text-center">
                     <img src={image} alt="提示" className="card-image" style={{ display: IsShow }} />
                 </IonCardHeader>
-                <IonCardContent style={{ overflowY: 'auto', height: 'calc(100% - 70px)' }}> {/* 调整高度以适应按钮 */}
+                <IonCardContent style={{ overflowY: 'auto', height: 'calc(80%)' }}>
                     {records}
                     {renderAddRecordForm()}
                 </IonCardContent>
@@ -258,8 +274,8 @@ const Tab4 = () => {
                         <IonLabel style={{ fontSize: '.6rem' }}>Blood HRV</IonLabel>
                     </IonSegmentButton>
                 </IonSegment>
-                <Line data={getChartData()} options={chartOptions} />
-                {renderContent()}
+                {selectedSegment === 'heart-rate' ? <div className="chart-container"><Line data={getChartData()} options={chartOptions} /></div> : null}
+                    {renderContent()}
             </IonContent>
         </IonPage>
     );

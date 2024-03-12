@@ -11,6 +11,9 @@ import boy from "./boy.jpg";
 import boy1 from "./boy1.jpg";
 const Tab4 = () => {
     const history = useHistory()
+    const userName = localStorage.getItem("userName").replace(/^"|"$/g, '');;
+    const userAvatar = localStorage.getItem('userAvatar').replace(/[\r\n]/g, '').replace(/^"|"$/g, '');
+    console.log(userAvatar)
 
     const navigateTo = (route) => {
         history.push(route)
@@ -24,9 +27,10 @@ const Tab4 = () => {
                 <div className="user-info">
                     <div className="user-avatar">
                         <IonAvatar className="avatar">
-                            {!localStorage.getItem("email")?<img src={boy} alt="User"/>:<img src={boy1} alt="User"/>}
+                            {!localStorage.getItem("email")?<img src={`data:image/png;base64,${userAvatar}`} alt="User" />
+                                :<img src={boy1} alt="User"/>}
                         </IonAvatar>
-                        <IonLabel className="user-label">djm</IonLabel>
+                        <IonLabel className="user-label">{userName}</IonLabel>
                     </div>
                 </div>
                 <IonCard className="user-menu">

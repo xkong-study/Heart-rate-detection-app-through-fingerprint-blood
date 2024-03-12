@@ -1,43 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     IonAlert,
     IonButton,
     IonContent,
-    IonHeader, IonInput,
+    IonHeader,
+    IonInput,
     IonItem,
     IonLabel,
-    IonList,
-    IonListHeader,
-    IonPage, IonSelect, IonSelectOption,
-    IonTitle, IonToggle,
-    IonToolbar
+    IonPage,
+    IonSelect,
+    IonSelectOption,
+    IonTitle,
+    IonToolbar,
+    IonToggle,
 } from '@ionic/react';
-import { useHistory } from 'react-router-dom';
-import App from "./camera";
-
-const activityLevels = [
-    [
-        { label: 'High (Regular intense physical activity)', value: 'high' },
-        { label: 'Moderate (Occasional moderate physical activity)', value: 'moderate' },
-        { label: 'Low (Little to no physical activity)', value: 'low' },
-    ]
-];
 
 const Survey = () => {
+    const [currentStep, setCurrentStep] = useState(1);
     const [age, setAge] = useState('');
     const [restingHeartRate, setRestingHeartRate] = useState('');
     const [activityLevel, setActivityLevel] = useState('');
     const [smokingStatus, setSmokingStatus] = useState(false);
-    const [showAlert, setShowAlert] = useState(false);
     const [healthTips, setHealthTips] = useState('');
-    const history = useHistory();
+
+    const totalSteps = 5; // Number of questions + 1 for health tips
+
+    useEffect(() => {
+        if (currentStep === 5) {
+            generateHealthTips();
+        }
+    }, [currentStep]); // This effect depends on currentStep.
+
+    const nextStep = () => setCurrentStep(currentStep + 1);
+    const prevStep = () => currentStep > 1 && setCurrentStep(currentStep - 1);
+
     const generateHealthTips = () => {
         let tips = "Health Tips: ";
         if (!age || !restingHeartRate) {
             return;
         }
-        const ageNum = parseInt(age);
-        const heartRateNum = parseInt(restingHeartRate);
+        const ageNum = parseInt(age, 10);
+        const heartRateNum = parseInt(restingHeartRate, 10);
 
         if (ageNum >= 45 || smokingStatus) {
             tips += "Given your age or smoking status, regular cardiovascular check-ups are recommended. ";
@@ -71,16 +74,64 @@ const Survey = () => {
                 break;
         }
 
-        if (smokingStatus) {
-            tips += "Smoking is a major risk factor for heart diseases; quitting smoking can significantly reduce your risk. ";
-        }
-
         setHealthTips(tips);
     };
 
-    function refreshWindow() {
-        window.location.reload();
-    }
+    const getProgress = () => ((currentStep / totalSteps) * 100).toFixed(0);
+
+    const renderStep = () => {
+        switch (currentStep) {
+            case 1:
+                return (
+                    <IonItem>
+                        <IonLabel position="floating">Age</IonLabel>
+                        <IonInput type="number" value={age} onIonChange={e => setAge(e.detail.value)}></IonInput>
+                    </IonItem>
+                );
+            case 2:
+                return (
+                    <IonItem>
+                        <IonLabel position="floating">Resting Heart Rate (beats per minute)</IonLabel>
+                        <IonInput type="number" value={restingHeartRate} onIonChange={e => setRestingHeartRate(e.detail.value)}></IonInput>
+                    </IonItem>
+                );
+            case 3:
+                return (
+                    <IonItem>
+                        <IonLabel>Activity Level</IonLabel>
+                        <IonSelect placeholder="Select One" value={activityLevel} onIonChange={e => setActivityLevel(e.detail.value)}>
+                            <IonSelectOption value="high">High (Regular intense physical activity)</IonSelectOption>
+                            <IonSelectOption value="moderate">Moderate (Occasional moderate physical activity)</IonSelectOption>
+                            <IonSelectOption value="low">Low (Little to no physical activity)</IonSelectOption>
+                        </IonSelect>
+                    </IonItem>
+                );
+            case 4:
+                return (
+                    <IonItem>
+                        <IonLabel>Smoker</IonLabel>
+                        <IonToggle checked={smokingStatus} onIonChange={e => setSmokingStatus(e.detail.checked)}></IonToggle>
+                    </IonItem>
+                );
+            case 5:
+                return (
+                    <div style={{
+                        marginTop: 20,
+                        padding: '20px',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                        backgroundColor: '#ffffff',
+                        color: '#333',
+                        lineHeight: '1.6',
+                        fontSize: '16px'
+                    }}>
+                        {healthTips}
+                    </div>
+                );
+            default:
+                return null;
+        }
+    };
 
     return (
         <IonPage>
@@ -90,38 +141,15 @@ const Survey = () => {
                 </IonToolbar>
             </IonHeader>
             <IonContent className="ion-padding">
-                <IonList>
-                    <IonListHeader>Please complete the survey</IonListHeader>
-                    <IonItem>
-                        <IonLabel position="floating">Age</IonLabel>
-                        <IonInput type="number" value={age} onIonChange={e => setAge(e.detail.value)}></IonInput>
-                    </IonItem>
-                    <IonItem>
-                        <IonLabel position="floating">Resting Heart Rate (beats per minute)</IonLabel>
-                        <IonInput type="number" value={restingHeartRate} onIonChange={e => setRestingHeartRate(e.detail.value)}></IonInput>
-                    </IonItem>
-                    <IonItem>
-                        <IonLabel>Activity Level</IonLabel>
-                        <IonSelect placeholder="Select One" value={activityLevel} onIonChange={e => setActivityLevel(e.detail.value)}>
-                            <IonSelectOption value="high">High (Regular intense physical activity)</IonSelectOption>
-                            <IonSelectOption value="moderate">Moderate (Occasional moderate physical activity)</IonSelectOption>
-                            <IonSelectOption value="low">Low (Little to no physical activity)</IonSelectOption>
-                        </IonSelect>
-                    </IonItem>
-                    <IonItem>
-                        <IonLabel>Smoker</IonLabel>
-                        <IonToggle checked={smokingStatus} onIonChange={e => setSmokingStatus(e.detail.checked)}></IonToggle>
-                    </IonItem>
-                    <IonButton expand="block" onClick={generateHealthTips} >Submit</IonButton>
-                    <IonButton expand="block" onClick={refreshWindow}>Go Back</IonButton>                </IonList>
-                {healthTips && <div style={{ marginTop: 20 }}>{healthTips}</div>}
-                <IonAlert
-                    isOpen={showAlert}
-                    onDidDismiss={() => setShowAlert(false)}
-                    header={'Alert'}
-                    message={'Please answer all questions.'}
-                    buttons={['OK']}
-                />
+                <div className="progress-container" style={{ width: '100%', backgroundColor: '#e0e0de', borderRadius: '5px', margin: '20px 0' }}>
+                    <div className="progress-bar" style={{ width: `${getProgress()}%`, backgroundColor: '#4caf50', height: '10px', borderRadius: '5px' }}></div>
+                </div>
+                {renderStep()}
+                <div style={{ marginTop: 50,margin:'3%' }}>
+                    {currentStep > 1 && <IonButton onClick={prevStep} style={{marginRight:150,width:'25%'}}>Back</IonButton>}
+                    {currentStep < totalSteps && <IonButton onClick={nextStep} style={{width:'25%'}}>Next</IonButton>}
+                    {currentStep === totalSteps && <IonButton onClick={() => window.location.reload()}>Finish</IonButton>}
+                </div>
             </IonContent>
         </IonPage>
     );

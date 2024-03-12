@@ -18,6 +18,7 @@ const Login = () => {
     const [username, setUsername] = useState('');
     const [signature, setSignature] = useState('');
     const [avatar, setAvatar] = useState('');
+    const [file, setFile] = useState('');
     const [isVisible, setIsVisible] = useState(false);
     const forceUpdate = false;
 
@@ -25,8 +26,8 @@ const Login = () => {
         setIsVisible(false);
     };
     const beforeUpload = (file) => {
+        setFile(file);
         const reader = new FileReader();
-        // @ts-ignore
         reader.onloadend = () => setAvatar(reader.result);
         reader.readAsDataURL(file);
         return false;
@@ -52,7 +53,9 @@ const Login = () => {
                     icon: 'success',
                     content: 'Login successful!',
                 });
-                localStorage.setItem('user', JSON.stringify(response.data));
+                console.log(response)
+                localStorage.setItem('userAvatar', JSON.stringify(response.data.avatar));
+                localStorage.setItem('userName', JSON.stringify(response.data.name));
                 history.push("/Camera");
             } else {
                 Toast.show({
@@ -83,21 +86,21 @@ const Login = () => {
 
     const handleRegister = async () => {
         try {
-            const response = await axios.post(
-                'http://192.168.0.63:8084/user/register', // Adjust this URL to match your back-end route
-                {
-                    name: username, // Assuming 'username' holds the new user's name
-                    email: email,
-                    password: r_password,
-                    signature: signature, // Additional fields as needed
-                    // avatar: avatar, // Handling file uploads requires additional setup
+            const formData = new FormData();
+            formData.append('name', username);
+            formData.append('email', email);
+            formData.append('password', r_password);
+            formData.append('signature', signature);
+            console.log(formData);
+            if (avatar !== null) {
+                formData.append('avatar', file);
+            }
+            const response = await axios.post('http://192.168.0.63:8084/user/register', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
                 },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }
-            );
+            });
+
             if (response.status === 200) {
                 Toast.show({
                     icon: 'success',
@@ -119,16 +122,14 @@ const Login = () => {
     document.querySelector('ion-tab-bar').style.display='none'
 
     return (
-        <IonPage>
-            <IonHeader>
-            </IonHeader>
+        <IonPage style={{marginTop:"3rem"}}>
             <IonContent fullscreen className="center-card">
                 <div className="card1">
                     <CapsuleTabs activeKey={activeTab} onChange={handleTabChange}>
                         <CapsuleTabs.Tab title='Sign in' key='fruits'>
                             <h2>Sign in to SmileSnap</h2>
                             <p className="fontStyle">
-                                Email
+                                Name
                             </p>
                             <Input
                                 className="input-field"
@@ -163,7 +164,7 @@ const Login = () => {
                                     height:"45px",
                                 }}
                             >
-                                <div style={{width:"250%"}}>email has registered</div>
+                                <div style={{width:"250%"}}>name has registered</div>
                                 <button onClick={closeAlert} style={{ background: 'none', border: 'none', color: 'inherit',marginTop:"-3%",marginLeft:"30%" }}>X</button>
                             </div>}
                             <div className="avatar-upload">
