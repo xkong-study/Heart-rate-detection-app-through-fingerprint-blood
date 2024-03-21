@@ -13,12 +13,12 @@ import {
     IonCardHeader,
     IonCardContent,
     IonIcon,
-    IonItem, IonInput
+    IonItem, IonInput, IonSelectOption, IonSelect
 } from '@ionic/react';
 import { useHistory } from "react-router-dom";
 import './Tab4.css';
 import image from './mobile.png';
-import { heartCircle, heartHalf, heartDislike } from "ionicons/icons";
+import {heartCircle, heartHalf, heartDislike, bookmarkOutline} from "ionicons/icons";
 import { Line } from 'react-chartjs-2';
 
 const Tab4 = () => {
@@ -33,6 +33,38 @@ const Tab4 = () => {
     const [IsShow, setShow] = useState('none')
     const [showAddRecordForm, setShowAddRecordForm] = useState(false);
     const [newRecordValue, setNewRecordValue] = useState('');
+    const [patients, setPatients] = useState([]);
+    const [currentPatientName, setCurrentPatientName] = useState('xkong');
+    const [advice, setAdvice] = useState('');
+    const [advice1, setAdvice1] = useState('');
+    const [doctor, setDoctor] = useState('');
+
+    useEffect(() => {
+        const fetchPatientsByDoctor = async () => {
+            const doctorName = localStorage.getItem('doctor');
+            if (!doctorName) {
+                console.log('No doctor name found in localStorage');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/user/listPatients/${doctorName}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const patients = await response.json();
+                let set = new Set();
+                patients.forEach((i)=> {
+                    set.add(i.name);
+                });
+                setPatients(Array.from(set));
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        };
+
+        fetchPatientsByDoctor();
+    }, []); // Add d
 
     useEffect(() => {
         const fetchData = async () => {
@@ -47,10 +79,22 @@ const Tab4 = () => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                console.log(response);
                 const result = await response.json();
 
-                const formattedData = result.reduce((acc, item) => {
+                const filteredResult = result.filter(item => item.name === currentPatientName);
+
+                let set2 = new Set();
+                let arr = [];
+                result.filter(i =>{
+                    if(inpm.name === currentPatientName) {
+                        if (!set2.has(i.status)) arr.push(i.doctor);
+                        set2.add(i.status);
+                    }
+                });
+                setAdvice1(Array.from(set2));
+                setDoctor(arr);
+
+                const formattedData = filteredResult.reduce((acc, item) => {
                     if (item.heartRate && item.heartRate !== 0) {
                         acc.heartRate.push({ value: item.heartRate, time: item.recordDate });
                     }
@@ -70,7 +114,36 @@ const Tab4 = () => {
         };
 
         fetchData();
-    }, [showAddRecordForm]);
+    }, [showAddRecordForm, currentPatientName]);
+
+    const submitAdvice = async () => {
+        const doctorName = localStorage.getItem('doctor'); // Or however you're determining the doctor's name
+
+        try {
+            const response = await fetch('/user/sendAdvice', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: currentPatientName, // Assuming this is the patient's name
+                    status: advice,
+                    doctorName: doctorName, // Add this field according to your backend expectation
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const result = await response.json();
+            console.log(result);
+            setAdvice(''); // Clear advice input after successful submission
+        } catch (error) {
+            console.error('Error:', error);
+            // Handle error (e.g., show an error message)
+        }
+    };
 
     useEffect(() => {
         if (data == null) {
@@ -98,12 +171,12 @@ const Tab4 = () => {
     const handleSegmentChange = (e) => {
         const newValue = e.detail.value;
         setSelectedSegment(newValue);
-        setShowAddRecordForm(false); // 切换标签时隐藏添加记录表单
+        setShowAddRecordForm(false);
     };
 
 
     const handleAddRecord = () => {
-        let parameterKey= ''; // 初始化为一个空字符串或合适的默认值
+        let parameterKey= '';
         switch (selectedSegment) {
             case 'heart-rate':
                 parameterKey = 'heartRate';
@@ -260,6 +333,17 @@ const Tab4 = () => {
                 </IonToolbar>
             </IonHeader>
             <IonContent fullscreen>
+                {
+                    localStorage.getItem('doctor')?
+                <IonSelect value={currentPatientName} onIonChange={e => setCurrentPatientName(e.detail.value)}>
+                    {patients.map((patient, index) => (
+                        <IonSelectOption key={index} value={patient}>
+                            {patient}
+                        </IonSelectOption>
+                    ))}
+                </IonSelect>
+                        : null
+                }
                 <IonSegment onIonChange={handleSegmentChange} value={selectedSegment} style={{ width: '90%', margin: '5%' }}>
                     <IonSegmentButton value="heart-rate">
                         <IonIcon icon={heartCircle} color="green" />
@@ -276,6 +360,31 @@ const Tab4 = () => {
                 </IonSegment>
                 {selectedSegment === 'heart-rate' ? <div className="chart-container"><Line data={getChartData()} options={chartOptions} /></div> : null}
                     {renderContent()}
+                {
+                    localStorage.getItem('doctor')?
+                        <div>
+                            <IonItem>
+                                <IonLabel position="stacked" style={{ fontWeight: 'bold' }}>Advice</IonLabel>
+                                <IonInput
+                                    value={advice}
+                                    onIonChange={e => setAdvice(e.detail.value)}
+                                    style={{ border: '1px solid #ccc', borderRadius: '5px', padding: '10px', width: '100%', boxSizing: 'border-box' }}
+                                ></IonInput>
+                                <IonIcon icon={bookmarkOutline} slot="start" style={{ color: '#007bff', marginRight: '10px' }}></IonIcon>
+                            </IonItem>
+                            <IonButton onClick={submitAdvice} style={{marginLeft:"72%",width:"25%",fontSize:"12px"}}>Submit Advice</IonButton>
+                        </div> :<div style={{ border: '2px solid #ccc', borderRadius: '5px', padding: '20px', margin: '15px' }}>
+                                <div>
+                                    <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>doctor's orders：</div>
+                                    <div>{advice1}</div>
+                                </div>
+                                <div style={{marginTop:'10px'}}>
+                                    <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>doctor：</div>
+                                    <div>{doctor[0]}</div>
+                                </div>
+                        </div>
+
+                }
             </IonContent>
         </IonPage>
     );

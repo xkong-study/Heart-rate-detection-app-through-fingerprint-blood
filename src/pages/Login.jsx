@@ -21,6 +21,9 @@ const Login = () => {
     const [file, setFile] = useState('');
     const [isVisible, setIsVisible] = useState(false);
     const forceUpdate = false;
+    const [isDoctor, setIsDoctor] = useState(false);
+
+
 
     const closeAlert = () => {
         setIsVisible(false);
@@ -35,25 +38,21 @@ const Login = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post(
-                'http://192.168.0.63:8084/user/login',
-                {
-                    name: value,
-                    password: password,
+            // 修改请求的发送逻辑以处理医生选项
+            const payload = isDoctor ? { doctor: value , password: password} : { name: value, password: password };
+            const response = await axios.post('http://192.168.0.63:8084/user/login', payload, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Methods': 'POST, GET, PUT, OPTIONS, DELETE',
                 },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Access-Control-Allow-Methods': 'POST, GET, PUT, OPTIONS, DELETE',
-                    },
-                }
-            );
+            });
+
             if (response.data) {
                 Toast.show({
                     icon: 'success',
                     content: 'Login successful!',
                 });
-                console.log(response)
+                if(isDoctor) localStorage.setItem('doctor',value);
                 localStorage.setItem('userAvatar', JSON.stringify(response.data.avatar));
                 localStorage.setItem('userName', JSON.stringify(response.data.name));
                 history.push("/Camera");
@@ -70,7 +69,7 @@ const Login = () => {
                 content: 'Login failed!',
             });
         }
-    }
+    };
 
     const uploadButton = (
         <Tooltip title="change avatar">
@@ -128,6 +127,16 @@ const Login = () => {
                     <CapsuleTabs activeKey={activeTab} onChange={handleTabChange}>
                         <CapsuleTabs.Tab title='Sign in' key='fruits'>
                             <h2>Sign in to SmileSnap</h2>
+                            <div className="checkbox-container">
+                                <div style={{ display: 'flex', alignItems: 'left', marginTop: '16px' }}>
+                                    <label style={{ marginRight: '10px' }}>Doctor</label>
+                                    <input
+                                        type="checkbox"
+                                        checked={isDoctor}
+                                        onChange={() => setIsDoctor(!isDoctor)}
+                                    />
+                                </div>
+                            </div>
                             <p className="fontStyle">
                                 Name
                             </p>
